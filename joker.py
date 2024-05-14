@@ -13,13 +13,12 @@ TARGET = ""
 # Define logo
 LOGO = """
 
- ######  ######
+ ######  ######  
      ##  #    #
      ##  #    #
  #   ##  #    # 
   ####   ######
 
-   
 """
 
 # Define attack function
