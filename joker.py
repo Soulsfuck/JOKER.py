@@ -54,13 +54,14 @@ def attack(target, message):
             print("Request sent to:", target)
         except Exception as e:
             print("Failed to send request:", e)
-        time.sleep(random.uniform(0.5, 2.0))  # Intervalo aleatório entre 0.5 e 2 segundos
+        time.sleep(random.uniform(0.5, 2.0))  
 
 
 def main(stdscr):
     stdscr.clear()
-    stdscr.addstr(0, (stdscr.cols // 2) - len(LOGO) // 2, LOGO)
-    stdscr.addstr(stdscr.lines - 2, 0, "Use as setas para navegar e pressione Enter para selecionar uma opção")
+    height, width = stdscr.getmaxyx()
+    stdscr.addstr(0, (width // 2) - len(LOGO.split("\n")[0]) // 2, LOGO) 
+    stdscr.addstr(stdscr.getmaxyx()[0] - 2, 0, "Use as setas para navegar e pressione Enter para selecionar uma opção")  
     stdscr.refresh()
 
     options = [
