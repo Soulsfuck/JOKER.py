@@ -1,3 +1,5 @@
+#!usr/bin/python3
+
 import requests
 import threading
 import argparse
@@ -63,11 +65,11 @@ def main(stdscr):
             current_option += 1
         elif key == curses.KEY_ENTER or key in [10, 13]:  
             if options[current_option][1] == "a":
-                pass  # Implemente o início do ataque aqui
+                pass  
             elif options[current_option][1] == "c":
                 clone_repository(stdscr)
             elif options[current_option][1] == "i":
-                pass  # Implemente a instalação das dependências aqui
+                pass  
             elif options[current_option][1] == "q":
                 break
 
