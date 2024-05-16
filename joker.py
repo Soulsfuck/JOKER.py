@@ -32,8 +32,11 @@ def clone_repository(stdscr):
     height, width = stdscr.getmaxyx()
     stdscr.addstr(0, (width // 2) - 15, "Clonando repositório...")
     stdscr.refresh()
+    
     subprocess.run(["git", "clone", "--force", "https://github.com/JOJOofSouls/ddos-tool.git"])
-    stdscr.addstr(2, (width // 2) - 15, "Repositório clonado com sucesso! Pressione qualquer tecla para continuar...")
+    
+    stdscr.addstr(2, (width // 2) - 15, "Repositório clonado com sucesso!")
+    stdscr.addstr(3, (width // 2) - 15, "Pressione qualquer tecla para continuar...")
     stdscr.getch()
 
 def main(stdscr):
